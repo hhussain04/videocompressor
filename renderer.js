@@ -53,3 +53,28 @@ compressButton.addEventListener('click', () => {
 
   reader.readAsArrayBuffer(file);
 });
+
+document.getElementById('view-videos-tab').addEventListener('click', async () => {
+  try {
+    const videoOutputsPath = path.join(__dirname, 'videooutputs');
+    console.log('Reading videos from:', videoOutputsPath);
+    const files = await fs.promises.readdir(videoOutputsPath);
+    const videoContainer = document.getElementById('video-container');
+    videoContainer.innerHTML = '';
+    files.forEach(file => {
+      if (file.endsWith('.mp4')) {
+        const videoPath = path.join(videoOutputsPath, file);
+        console.log('Loading video:', videoPath);
+        const videoElement = document.createElement('video');
+        videoElement.src = videoPath;
+        videoElement.controls = true;
+        videoElement.addEventListener('error', (e) => {
+          console.error('Error loading video:', videoPath, e);
+        });
+        videoContainer.appendChild(videoElement);
+      }
+    });
+  } catch (error) {
+    console.error('Error loading videos:', error);
+  }
+});
